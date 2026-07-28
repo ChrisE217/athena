@@ -17,7 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Node 24 ships npm ≥ 11.5.1 (required for Trusted Publisher OIDC)
       - uses: actions/setup-node@v4
         with:
           node-version: 24
