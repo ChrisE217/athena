@@ -7,6 +7,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.54.1",
-    "athena-playwright-reporter": "file:../.."
+    "athena-playwright": "file:../.."
   }
 }

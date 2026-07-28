@@ -8,7 +8,7 @@ export default defineConfig({
   expect: { timeout: 2_000 },
   reporter: [
     ['list'],
-    ['athena-playwright-reporter', { outputFolder: 'athena-report', open: 'never', title: 'Athena Smoke' }],
+    ['athena-playwright', { outputFolder: 'athena-report', open: 'never', title: 'Athena Smoke' }],
   ],
   use: {
     testIdAttribute: 'data-test',

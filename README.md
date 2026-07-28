@@ -5,7 +5,7 @@ A fast Playwright reporter with a custom report UI — steps, failures, screensh
 ## Install
 
 ```bash
-npm i -D athena-playwright-reporter
+npm i -D athena-playwright
 ```
 
 Requires Node 18+ and `@playwright/test` ≥ 1.40 (peer dependency).
@@ -18,7 +18,7 @@ Drop Athena into `playwright.config.ts`:
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  reporter: [['athena-playwright-reporter']],
+  reporter: [['athena-playwright']],
   use: {
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
@@ -49,7 +49,7 @@ Pass options as the second element of the reporter tuple:
 ```ts
 reporter: [
   ['list'], // optional: keep Playwright’s terminal reporter
-  ['athena-playwright-reporter', {
+  ['athena-playwright', {
     outputFolder: 'athena-report',
     open: 'on-failure',
     title: 'Athena',
@@ -66,7 +66,7 @@ reporter: [
 TypeScript types are exported:
 
 ```ts
-import type { AthenaReporterOptions } from 'athena-playwright-reporter';
+import type { AthenaReporterOptions } from 'athena-playwright';
 ```
 
 ### Recommended Playwright settings
@@ -155,7 +155,7 @@ In CI, set `open: 'never'` so nothing tries to launch a browser:
 
 ```ts
 reporter: [
-  ['athena-playwright-reporter', {
+  ['athena-playwright', {
     outputFolder: 'athena-report',
     open: 'never',
   }],
@@ -188,13 +188,22 @@ npx athena show athena-report
 
 ### Publish (maintainers)
 
+Publishing is handled by GitHub Actions on release (`.github/workflows/publish.yml`) with npm provenance.
+
+One-time setup on [npmjs.com](https://www.npmjs.com) → package (or account) → **Trusted Publisher** → GitHub Actions:
+
+- Repository: `ChrisE217/athena`
+- Workflow: `publish.yml`
+
+Then:
+
 ```bash
-npm login
 npm version patch   # or minor / major
-npm publish
+git push --follow-tags
+gh release create v$(node -p "require('./package.json').version") --generate-notes
 ```
 
-`prepublishOnly` / `prepack` run `npm run build` automatically. Dry-run with `npm pack --dry-run`.
+Manual publish still works (`npm login && npm publish`). `prepublishOnly` / `prepack` run `npm run build`. Dry-run with `npm pack --dry-run`.
 
 ## License
 

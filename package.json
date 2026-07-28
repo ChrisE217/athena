@@ -1,5 +1,5 @@
 {
-  "name": "athena-playwright-reporter",
+  "name": "athena-playwright",
   "version": "0.1.0",
   "description": "Athena — a fast Playwright test reporter with steps, traces, heatmaps, and AI fix prompts",
   "type": "module",

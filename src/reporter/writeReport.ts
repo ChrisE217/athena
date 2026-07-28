@@ -28,7 +28,7 @@ export function writeReportFolder(outputFolder: string, report: AthenaReport): v
   const uiDir = uiAssetsDir();
   if (!existsSync(uiDir)) {
     throw new Error(
-      `Athena UI assets not found at ${uiDir}. Run "npm run build" in athena-playwright-reporter.`,
+      `Athena UI assets not found at ${uiDir}. Run "npm run build" in athena-playwright.`,
     );
   }
 
