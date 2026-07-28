@@ -17,8 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Do not set registry-url — it writes an empty NODE_AUTH_TOKEN into .npmrc
-      # and breaks Trusted Publisher OIDC (npm returns 404 on publish).
       - uses: actions/setup-node@v4
         with:
           node-version: 22
