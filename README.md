@@ -59,9 +59,10 @@ reporter: [
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `outputFolder` | `string` | `'athena-report'` | Directory for the HTML report and attachments. Relative paths resolve from the Playwright config file’s directory (or `cwd` if no config file). Absolute paths are used as-is. **Wiped on each run.** |
+| `outputFolder` | `string` | `'athena-report'` | Directory for the HTML report and attachments. Relative paths resolve from the Playwright config file’s directory (or `cwd` if no config file). Absolute paths are used as-is. **Wiped on each unsharded run.** |
 | `open` | `'always' \| 'never' \| 'on-failure'` | `'on-failure'` | Whether to auto-open the report in a browser when the run finishes. `'on-failure'` opens when the run status is not `passed`. |
 | `title` | `string` | `'Athena'` | Title shown in the report UI / document. |
+| `autoMerge` | `boolean` | `true` | When using Playwright `--shard`, write each shard under `outputFolder/shards/{n}-of-{total}/` and merge into `outputFolder` automatically once all shard reports exist on disk. |
 
 TypeScript types are exported:
 
@@ -105,6 +106,31 @@ npx athena show athena-report --no-open
 | `--no-open` | off | Do not open a browser tab |
 
 Shorthand: `npx athena <reportDir>` works if that folder already has an `index.html`.
+
+### `athena merge [reportDir|dirs...]`
+
+Merge sharded (or separately collected) Athena reports into one.
+
+```bash
+# After all shards wrote to athena-report/shards/{n}-of-{total}/
+npx athena merge athena-report
+
+# Merge explicit report folders (e.g. downloaded CI artifacts)
+npx athena merge ./shard-1 ./shard-2 ./shard-3 -o merged-athena-report
+
+# Directory whose children each contain report.json
+npx athena merge ./downloaded-artifacts -o merged-athena-report
+
+npx athena merge athena-report --allow-partial   # missing shards ok
+npx athena merge athena-report --title "Nightly"
+```
+
+| Flag | Default | Description |
+|---|---|---|
+| `[reportDir]` | `athena-report` | Folder containing `shards/` **or** child report dirs |
+| `-o, --output <dir>` | in-place / `merged-athena-report` | Where to write the merged report |
+| `--allow-partial` | off | Merge even if some `{n}-of-{total}` shards are missing |
+| `--title <name>` | first report’s title | Title for the merged report |
 
 ### `athena trace <trace.zip>`
 
@@ -168,6 +194,47 @@ Upload `athena-report/` as a build artifact, then open locally:
 npx athena show ./athena-report
 ```
 
+### Sharded CI
+
+Athena is shard-aware. Each job writes only its shard folder (other shards on disk are left alone):
+
+```bash
+npx playwright test --shard=1/4   # → athena-report/shards/1-of-4/
+npx playwright test --shard=2/4   # → athena-report/shards/2-of-4/
+# ...
+```
+
+**Same machine / shared disk:** when the last shard finishes, Athena auto-merges into `athena-report/`.
+
+**Separate CI jobs:** upload each job’s `athena-report/shards/` (or the whole `athena-report/`), download them into one tree, then merge:
+
+```bash
+# after collecting shards into ./athena-report/shards/{1-of-4,2-of-4,...}
+npx athena merge ./athena-report
+
+# or merge downloaded per-job report dirs
+npx athena merge ./artifacts/shard-* -o merged-athena-report
+```
+
+GitHub Actions sketch:
+
+```yaml
+strategy:
+  matrix:
+    shard: [1, 2, 3, 4]
+steps:
+  - run: npx playwright test --shard=${{ matrix.shard }}/4
+  - uses: actions/upload-artifact@v4
+    with:
+      name: athena-shard-${{ matrix.shard }}
+      path: athena-report/shards/
+
+# merge job:
+# - download all athena-shard-* into athena-report/shards/
+# - npx athena merge athena-report
+# - upload athena-report/ (merged index.html + report.json + data/)
+```
+
 ---
 
 ## Develop
@@ -176,6 +243,8 @@ npx athena show ./athena-report
 npm install
 npm run build           # UI + reporter → dist/
 npm run dev:ui          # UI against ui/public/report.json
+npm test                # build + merge/shard unit tests
+npm run test:shards     # e2e: smoke suite as 2 shards + auto-merge assert
 ```
 
 Smoke example:
@@ -183,6 +252,11 @@ Smoke example:
 ```bash
 npm run build
 cd examples/smoke && npm install && npx playwright install chromium && npm test
+npx athena show athena-report
+
+# sharded (also: npm run test:shards from repo root)
+npx playwright test --shard=1/2
+npx playwright test --shard=2/2
 npx athena show athena-report
 ```
 

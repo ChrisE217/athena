@@ -10,15 +10,36 @@ import type {
 } from '@playwright/test/reporter';
 import type { AthenaReporterOptions } from '../types.js';
 import { buildReport } from './collect.js';
+import {
+  allShardsPresent,
+  shardReportDir,
+  tryAutoMergeShards,
+  writeShardMeta,
+  type ShardInfo,
+} from './merge.js';
 import { writeReportFolder } from './writeReport.js';
 
 export type { AthenaReporterOptions, AthenaReport, AthenaTest } from '../types.js';
 export { buildFixPrompt } from './prompt.js';
+export {
+  mergeAthenaReports,
+  mergeReportDirectories,
+  mergeShardsIntoOutput,
+  listShardReportDirs,
+  allShardsPresent,
+  tryAutoMergeShards,
+} from './merge.js';
 
 function resolveOutputFolder(config: FullConfig, configured: string): string {
   if (isAbsolute(configured)) return configured;
   const base = config.configFile ? dirname(config.configFile) : process.cwd();
   return join(base, configured);
+}
+
+function readShard(config: FullConfig): ShardInfo | null {
+  const shard = config.shard;
+  if (!shard || !shard.total || !shard.current) return null;
+  return { current: shard.current, total: shard.total };
 }
 
 class AthenaReporter implements Reporter {
@@ -27,12 +48,15 @@ class AthenaReporter implements Reporter {
   private rootSuite!: Suite;
   private startTime = new Date();
   private outputFolder = 'athena-report';
+  private writeFolder = 'athena-report';
+  private shard: ShardInfo | null = null;
 
   constructor(options: AthenaReporterOptions = {}) {
     this.options = {
       outputFolder: options.outputFolder ?? 'athena-report',
       open: options.open ?? 'on-failure',
       title: options.title ?? 'Athena',
+      autoMerge: options.autoMerge ?? true,
     };
   }
 
@@ -45,9 +69,18 @@ class AthenaReporter implements Reporter {
     this.rootSuite = suite;
     this.startTime = new Date();
     this.outputFolder = resolveOutputFolder(config, this.options.outputFolder);
+    this.shard = readShard(config);
 
-    rmSync(this.outputFolder, { recursive: true, force: true });
-    mkdirSync(join(this.outputFolder, 'data'), { recursive: true });
+    if (this.shard) {
+      this.writeFolder = shardReportDir(this.outputFolder, this.shard);
+      mkdirSync(join(this.outputFolder, 'shards'), { recursive: true });
+      writeShardMeta(this.outputFolder, this.shard, this.options.title);
+    } else {
+      this.writeFolder = this.outputFolder;
+    }
+
+    rmSync(this.writeFolder, { recursive: true, force: true });
+    mkdirSync(join(this.writeFolder, 'data'), { recursive: true });
   }
 
   async onEnd(result: FullResult): Promise<void> {
@@ -58,22 +91,62 @@ class AthenaReporter implements Reporter {
       status: result.status,
       startTime: this.startTime,
       duration,
-      destRoot: this.outputFolder,
+      destRoot: this.writeFolder,
       title: this.options.title,
     });
 
-    writeReportFolder(this.outputFolder, report);
+    writeReportFolder(this.writeFolder, report);
 
-    // eslint-disable-next-line no-console
-    console.log(`\nAthena report: ${this.outputFolder}`);
-    // eslint-disable-next-line no-console
-    console.log(`View with: npx athena show ${this.options.outputFolder}`);
+    let merged = false;
+    let openStatus: FullResult['status'] = result.status;
+
+    if (this.shard) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `\nAthena shard report (${this.shard.current}/${this.shard.total}): ${this.writeFolder}`,
+      );
+
+      if (this.options.autoMerge) {
+        const mergedReport = tryAutoMergeShards(this.outputFolder, {
+          title: this.options.title,
+          total: this.shard.total,
+        });
+        if (mergedReport) {
+          merged = true;
+          openStatus = mergedReport.status;
+          // eslint-disable-next-line no-console
+          console.log(`Athena merged report: ${this.outputFolder}`);
+          // eslint-disable-next-line no-console
+          console.log(`View with: npx athena show ${this.options.outputFolder}`);
+        } else if (!allShardsPresent(this.outputFolder, this.shard.total)) {
+          // eslint-disable-next-line no-console
+          console.log(
+            `Waiting for remaining shards under ${join(this.outputFolder, 'shards')}`,
+          );
+          // eslint-disable-next-line no-console
+          console.log(
+            `Merge later with: npx athena merge ${this.options.outputFolder}`,
+          );
+        }
+      } else {
+        // eslint-disable-next-line no-console
+        console.log(
+          `Merge with: npx athena merge ${this.options.outputFolder}`,
+        );
+      }
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(`\nAthena report: ${this.outputFolder}`);
+      // eslint-disable-next-line no-console
+      console.log(`View with: npx athena show ${this.options.outputFolder}`);
+    }
 
     const shouldOpen =
       this.options.open === 'always' ||
-      (this.options.open === 'on-failure' && result.status !== 'passed');
+      (this.options.open === 'on-failure' && openStatus !== 'passed');
 
-    if (shouldOpen) {
+    // Only auto-open a complete report (unsharded, or merged).
+    if (shouldOpen && (!this.shard || merged)) {
       this.openReport();
     }
   }

@@ -2,6 +2,11 @@ import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
+import {
+  mergeReportDirectories,
+  mergeShardsIntoOutput,
+  resolveMergeInputs,
+} from './reporter/merge.js';
 
 const MIME: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -25,11 +30,15 @@ function printHelp(): void {
 
 Usage:
   athena show [reportDir] [--port 9324] [--no-open]
+  athena merge [reportDir|shardDirs...] [-o outputDir] [--allow-partial] [--title name]
   athena trace <trace.zip>
 
 Options:
-  --port <n>   Port for static server (default 9324)
-  --no-open    Do not open a browser
+  --port <n>         Port for static server (default 9324)
+  --no-open          Do not open a browser
+  -o, --output <dir> Merge output directory
+  --allow-partial    Merge even if some shards are missing
+  --title <name>     Title for the merged report
 `);
 }
 
@@ -145,6 +154,69 @@ function showTrace(args: string[]): void {
   child.on('exit', (code) => process.exit(code ?? 0));
 }
 
+function mergeCommand(args: string[]): void {
+  let output: string | undefined;
+  let allowPartial = false;
+  let title: string | undefined;
+  const positional: string[] = [];
+
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a === '--allow-partial') allowPartial = true;
+    else if (a === '-o' || a === '--output') output = args[++i];
+    else if (a === '--title') title = args[++i];
+    else if (a === '--help' || a === '-h') {
+      printHelp();
+      return;
+    } else if (!a.startsWith('-')) {
+      positional.push(a);
+    } else {
+      console.error(`Unknown option: ${a}`);
+      process.exit(1);
+    }
+  }
+
+  const resolvedPositional = positional.map((p) => resolve(process.cwd(), p));
+
+  let inputDirs: string[];
+  let outputFolder: string;
+  let mode: 'shards' | 'dirs';
+
+  try {
+    const resolved = resolveMergeInputs(
+      resolvedPositional.length ? resolvedPositional : [resolve(process.cwd(), 'athena-report')],
+    );
+    mode = resolved.mode;
+    inputDirs = resolved.inputDirs;
+    outputFolder = resolve(process.cwd(), output ?? resolved.outputFolder);
+  } catch (err) {
+    console.error(String(err instanceof Error ? err.message : err));
+    process.exit(1);
+  }
+
+  if (!inputDirs.length) {
+    console.error('No Athena reports found to merge.');
+    process.exit(1);
+  }
+
+  try {
+    const shardRoot = resolvedPositional[0] ?? resolve(process.cwd(), 'athena-report');
+    const mergingIntoShardRoot =
+      mode === 'shards' && outputFolder === shardRoot;
+
+    const report = mergingIntoShardRoot
+      ? mergeShardsIntoOutput(outputFolder, { title, allowPartial })
+      : mergeReportDirectories(inputDirs, outputFolder, { title });
+
+    console.log(`Merged ${inputDirs.length} report(s) → ${outputFolder}`);
+    console.log(`Tests: ${report.stats.total} (pass rate ${report.stats.passRate.toFixed(1)}%)`);
+    console.log(`View with: npx athena show ${outputFolder}`);
+  } catch (err) {
+    console.error(String(err instanceof Error ? err.message : err));
+    process.exit(1);
+  }
+}
+
 async function main(): Promise<void> {
   const [, , command, ...rest] = process.argv;
   if (!command || command === 'help' || command === '--help' || command === '-h') {
@@ -153,6 +225,10 @@ async function main(): Promise<void> {
   }
   if (command === 'show') {
     await showReport(rest);
+    return;
+  }
+  if (command === 'merge') {
+    mergeCommand(rest);
     return;
   }
   if (command === 'trace') {

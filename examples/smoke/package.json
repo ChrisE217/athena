@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "test": "playwright test",
+    "test:shards": "node ../../scripts/test-shards.mjs",
     "report": "athena show athena-report"
   },
   "devDependencies": {

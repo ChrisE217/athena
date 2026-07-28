@@ -106,4 +106,11 @@ export interface AthenaReporterOptions {
   outputFolder?: string;
   open?: 'never' | 'always' | 'on-failure';
   title?: string;
+  /**
+   * When running with Playwright `--shard`, write each shard under
+   * `{outputFolder}/shards/{n}-of-{total}/` and, once every shard report is
+   * present on disk, merge them into `{outputFolder}` automatically.
+   * Default: true
+   */
+  autoMerge?: boolean;
 }

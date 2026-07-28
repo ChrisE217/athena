@@ -12,7 +12,12 @@ import type { AthenaReport } from '../types.js';
 
 function packageRoot(): string {
   const here = dirname(fileURLToPath(import.meta.url));
-  // dist/reporter → package root
+  // Bundled as dist/reporter/index.js → ../..
+  // Bundled as dist/cli.js → ..
+  const candidates = [join(here, '..', '..'), join(here, '..'), here];
+  for (const root of candidates) {
+    if (existsSync(join(root, 'dist', 'ui', 'index.html'))) return root;
+  }
   return join(here, '..', '..');
 }
 
