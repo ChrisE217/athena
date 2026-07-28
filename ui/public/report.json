@@ -1,0 +1,456 @@
+{
+  "version": 1,
+  "title": "Athena",
+  "generatedAt": "2026-07-28T09:00:00.000Z",
+  "startTime": "2026-07-28T08:58:00.000Z",
+  "duration": 124500,
+  "status": "failed",
+  "stats": {
+    "total": 8,
+    "passed": 4,
+    "failed": 2,
+    "flaky": 1,
+    "skipped": 1,
+    "timedOut": 0,
+    "interrupted": 0,
+    "passRate": 71.4,
+    "duration": 124500
+  },
+  "config": {
+    "rootDir": "/demo",
+    "projects": ["chromium"],
+    "workers": 4
+  },
+  "suites": [
+    {
+      "id": "chromium",
+      "title": "chromium",
+      "duration": 124500,
+      "counts": {
+        "passed": 4,
+        "failed": 2,
+        "flaky": 1,
+        "skipped": 1,
+        "timedOut": 0,
+        "interrupted": 0
+      },
+      "suites": [
+        {
+          "id": "claimedProfile",
+          "title": "claimedProfilePageInPublicView.playwright.spec.ts",
+          "file": "tests/claimedProfilePageInPublicView.playwright.spec.ts",
+          "duration": 98000,
+          "counts": {
+            "passed": 2,
+            "failed": 1,
+            "flaky": 1,
+            "skipped": 0,
+            "timedOut": 0,
+            "interrupted": 0
+          },
+          "suites": [
+            {
+              "id": "public-view",
+              "title": "Claimed Profile Page in Public View",
+              "duration": 98000,
+              "counts": {
+                "passed": 2,
+                "failed": 1,
+                "flaky": 1,
+                "skipped": 0,
+                "timedOut": 0,
+                "interrupted": 0
+              },
+              "suites": [],
+              "tests": [
+                {
+                  "id": "t1",
+                  "title": "should display first clip with blue highlight",
+                  "titlePath": [
+                    "chromium",
+                    "claimedProfilePageInPublicView.playwright.spec.ts",
+                    "Claimed Profile Page in Public View",
+                    "should display first clip with blue highlight"
+                  ],
+                  "file": "tests/claimedProfilePageInPublicView.playwright.spec.ts",
+                  "line": 318,
+                  "column": 11,
+                  "projectName": "chromium",
+                  "outcome": "failed",
+                  "duration": 31200,
+                  "retries": 0,
+                  "tags": [],
+                  "annotations": [],
+                  "attempts": [
+                    {
+                      "retry": 0,
+                      "status": "failed",
+                      "duration": 31200,
+                      "startTime": "2026-07-28T08:58:10.000Z",
+                      "errors": [
+                        {
+                          "message": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('[data-test=\"action-button\"]').filter({ hasText: 'On Ball' })\n",
+                          "snippet": "  370 |   async clickExpectedActionButtonByName(targetAction: string) {\n  371 |     const actionButton = this.actionButtonByName(targetAction);\n> 372 |     await actionButton.click();\n      |                        ^ TimeoutError: locator.click: Timeout 30000ms exceeded.\n  373 |     await expect(actionButton).toHaveClass(/border-primary/, {\n  374 |       timeout: 15000,\n  375 |     });",
+                          "location": {
+                            "file": "tests/pages/AthleteProfilePage.ts",
+                            "line": 372,
+                            "column": 24
+                          }
+                        }
+                      ],
+                      "steps": [
+                        {
+                          "title": "Before Hooks",
+                          "category": "hook",
+                          "duration": 420,
+                          "failed": false,
+                          "steps": []
+                        },
+                        {
+                          "title": "Navigate to public profile",
+                          "category": "test.step",
+                          "duration": 1800,
+                          "failed": false,
+                          "steps": []
+                        },
+                        {
+                          "title": "Open Skill video section",
+                          "category": "test.step",
+                          "duration": 900,
+                          "failed": false,
+                          "steps": []
+                        },
+                        {
+                          "title": "Click On Ball action",
+                          "category": "test.step",
+                          "duration": 30010,
+                          "failed": true,
+                          "error": {
+                            "message": "TimeoutError: locator.click: Timeout 30000ms exceeded."
+                          },
+                          "steps": [
+                            {
+                              "title": "Click action-button On Ball",
+                              "category": "pw:api",
+                              "duration": 30000,
+                              "failed": true,
+                              "error": {
+                                "message": "TimeoutError: locator.click: Timeout 30000ms exceeded."
+                              },
+                              "steps": []
+                            }
+                          ]
+                        },
+                        {
+                          "title": "After Hooks",
+                          "category": "hook",
+                          "duration": 80,
+                          "failed": false,
+                          "steps": []
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "data/demo-screenshot.svg",
+                          "kind": "screenshot"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "data/demo-trace.zip",
+                          "kind": "trace"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "t2",
+                  "title": "should sort playlist ascending",
+                  "titlePath": [
+                    "chromium",
+                    "claimedProfilePageInPublicView.playwright.spec.ts",
+                    "Claimed Profile Page in Public View",
+                    "should sort playlist ascending"
+                  ],
+                  "file": "tests/claimedProfilePageInPublicView.playwright.spec.ts",
+                  "line": 340,
+                  "column": 11,
+                  "projectName": "chromium",
+                  "outcome": "passed",
+                  "duration": 4200,
+                  "retries": 0,
+                  "tags": [],
+                  "annotations": [],
+                  "attempts": [
+                    {
+                      "retry": 0,
+                      "status": "passed",
+                      "duration": 4200,
+                      "startTime": "2026-07-28T08:58:42.000Z",
+                      "errors": [],
+                      "steps": [
+                        {
+                          "title": "Expect playlist order",
+                          "category": "expect",
+                          "duration": 120,
+                          "failed": false,
+                          "steps": []
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ]
+                },
+                {
+                  "id": "t3",
+                  "title": "should show total highlights count",
+                  "titlePath": [
+                    "chromium",
+                    "claimedProfilePageInPublicView.playwright.spec.ts",
+                    "Claimed Profile Page in Public View",
+                    "should show total highlights count"
+                  ],
+                  "file": "tests/claimedProfilePageInPublicView.playwright.spec.ts",
+                  "line": 360,
+                  "column": 11,
+                  "projectName": "chromium",
+                  "outcome": "flaky",
+                  "duration": 18000,
+                  "retries": 1,
+                  "tags": [],
+                  "annotations": [],
+                  "attempts": [
+                    {
+                      "retry": 0,
+                      "status": "failed",
+                      "duration": 12000,
+                      "startTime": "2026-07-28T08:59:00.000Z",
+                      "errors": [
+                        {
+                          "message": "Error: expect(received).toBe(expected)\n\nExpected: 5\nReceived: 4"
+                        }
+                      ],
+                      "steps": [
+                        {
+                          "title": "Assert total clips",
+                          "category": "expect",
+                          "duration": 40,
+                          "failed": true,
+                          "error": {
+                            "message": "Expected: 5\nReceived: 4"
+                          },
+                          "steps": []
+                        }
+                      ],
+                      "attachments": []
+                    },
+                    {
+                      "retry": 1,
+                      "status": "passed",
+                      "duration": 6000,
+                      "startTime": "2026-07-28T08:59:13.000Z",
+                      "errors": [],
+                      "steps": [
+                        {
+                          "title": "Assert total clips",
+                          "category": "expect",
+                          "duration": 30,
+                          "failed": false,
+                          "steps": []
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ]
+                },
+                {
+                  "id": "t4",
+                  "title": "should render video tabs",
+                  "titlePath": [
+                    "chromium",
+                    "claimedProfilePageInPublicView.playwright.spec.ts",
+                    "Claimed Profile Page in Public View",
+                    "should render video tabs"
+                  ],
+                  "file": "tests/claimedProfilePageInPublicView.playwright.spec.ts",
+                  "line": 200,
+                  "column": 11,
+                  "projectName": "chromium",
+                  "outcome": "passed",
+                  "duration": 3100,
+                  "retries": 0,
+                  "tags": [],
+                  "annotations": [],
+                  "attempts": [
+                    {
+                      "retry": 0,
+                      "status": "passed",
+                      "duration": 3100,
+                      "startTime": "2026-07-28T08:59:20.000Z",
+                      "errors": [],
+                      "steps": [],
+                      "attachments": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "tests": []
+        },
+        {
+          "id": "auth",
+          "title": "auth.playwright.spec.ts",
+          "file": "tests/auth.playwright.spec.ts",
+          "duration": 26500,
+          "counts": {
+            "passed": 2,
+            "failed": 1,
+            "flaky": 0,
+            "skipped": 1,
+            "timedOut": 0,
+            "interrupted": 0
+          },
+          "suites": [],
+          "tests": [
+            {
+              "id": "t5",
+              "title": "logs in with valid credentials",
+              "titlePath": [
+                "chromium",
+                "auth.playwright.spec.ts",
+                "logs in with valid credentials"
+              ],
+              "file": "tests/auth.playwright.spec.ts",
+              "line": 12,
+              "column": 7,
+              "projectName": "chromium",
+              "outcome": "passed",
+              "duration": 5200,
+              "retries": 0,
+              "tags": [],
+              "annotations": [],
+              "attempts": [
+                {
+                  "retry": 0,
+                  "status": "passed",
+                  "duration": 5200,
+                  "startTime": "2026-07-28T08:59:30.000Z",
+                  "errors": [],
+                  "steps": [],
+                  "attachments": []
+                }
+              ]
+            },
+            {
+              "id": "t6",
+              "title": "rejects invalid password",
+              "titlePath": [
+                "chromium",
+                "auth.playwright.spec.ts",
+                "rejects invalid password"
+              ],
+              "file": "tests/auth.playwright.spec.ts",
+              "line": 28,
+              "column": 7,
+              "projectName": "chromium",
+              "outcome": "failed",
+              "duration": 8100,
+              "retries": 0,
+              "tags": [],
+              "annotations": [],
+              "attempts": [
+                {
+                  "retry": 0,
+                  "status": "failed",
+                  "duration": 8100,
+                  "startTime": "2026-07-28T08:59:36.000Z",
+                  "errors": [
+                    {
+                      "message": "Error: expect(locator).toBeVisible() failed\nLocator: getByText('Invalid credentials')"
+                    }
+                  ],
+                  "steps": [
+                    {
+                      "title": "Submit login form",
+                      "category": "test.step",
+                      "duration": 400,
+                      "failed": false,
+                      "steps": []
+                    },
+                    {
+                      "title": "Expect error banner",
+                      "category": "expect",
+                      "duration": 5000,
+                      "failed": true,
+                      "error": {
+                        "message": "Error: expect(locator).toBeVisible() failed"
+                      },
+                      "steps": []
+                    }
+                  ],
+                  "attachments": []
+                }
+              ]
+            },
+            {
+              "id": "t7",
+              "title": "SSO happy path",
+              "titlePath": ["chromium", "auth.playwright.spec.ts", "SSO happy path"],
+              "file": "tests/auth.playwright.spec.ts",
+              "line": 44,
+              "column": 7,
+              "projectName": "chromium",
+              "outcome": "passed",
+              "duration": 6400,
+              "retries": 0,
+              "tags": [],
+              "annotations": [],
+              "attempts": [
+                {
+                  "retry": 0,
+                  "status": "passed",
+                  "duration": 6400,
+                  "startTime": "2026-07-28T08:59:45.000Z",
+                  "errors": [],
+                  "steps": [],
+                  "attachments": []
+                }
+              ]
+            },
+            {
+              "id": "t8",
+              "title": "legacy magic link",
+              "titlePath": ["chromium", "auth.playwright.spec.ts", "legacy magic link"],
+              "file": "tests/auth.playwright.spec.ts",
+              "line": 60,
+              "column": 7,
+              "projectName": "chromium",
+              "outcome": "skipped",
+              "duration": 0,
+              "retries": 0,
+              "tags": [],
+              "annotations": [{ "type": "skip", "description": "deprecated" }],
+              "attempts": [
+                {
+                  "retry": 0,
+                  "status": "skipped",
+                  "duration": 0,
+                  "startTime": "2026-07-28T08:59:52.000Z",
+                  "errors": [],
+                  "steps": [],
+                  "attachments": []
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "tests": []
+    }
+  ],
+  "tests": []
+}

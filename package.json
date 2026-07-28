@@ -1,0 +1,81 @@
+{
+  "name": "athena-playwright-reporter",
+  "version": "0.1.0",
+  "description": "Athena — a fast Playwright test reporter with steps, traces, heatmaps, and AI fix prompts",
+  "type": "module",
+  "main": "./dist/reporter/index.cjs",
+  "module": "./dist/reporter/index.js",
+  "types": "./dist/reporter/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/reporter/index.d.ts",
+      "import": "./dist/reporter/index.js",
+      "require": "./dist/reporter/index.cjs",
+      "default": "./dist/reporter/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "athena": "./dist/cli.js"
+  },
+  "files": [
+    "dist/cli.js",
+    "dist/reporter/index.js",
+    "dist/reporter/index.cjs",
+    "dist/reporter/index.d.ts",
+    "dist/reporter/index.d.cts",
+    "dist/ui/index.html",
+    "dist/ui/assets",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build:ui": "vite build --config ui/vite.config.ts",
+    "build:reporter": "tsup",
+    "build": "npm run build:ui && npm run build:reporter && node scripts/copy-ui.mjs",
+    "dev:ui": "vite --config ui/vite.config.ts",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "playwright",
+    "playwright-reporter",
+    "reporter",
+    "testing",
+    "test-reporter",
+    "html-reporter",
+    "athena",
+    "trace",
+    "e2e"
+  ],
+  "author": "Chris Ewart",
+  "license": "MIT",
+  "homepage": "https://github.com/ChrisE217/athena#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChrisE217/athena.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ChrisE217/athena/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.40.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@types/node": "^22.15.30",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.5.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

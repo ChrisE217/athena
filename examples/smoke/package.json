@@ -1,0 +1,12 @@
+{
+  "name": "athena-smoke",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "report": "athena show athena-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "athena-playwright-reporter": "file:../.."
+  }
+}

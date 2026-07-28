@@ -1,0 +1,21 @@
+node_modules/
+dist/
+dist-ui/
+*.tgz
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.local
+
+# Generated reports / Playwright output
+athena-report/
+playwright-report/
+test-results/
+blob-report/
+
+# Example app noise
+examples/*/node_modules/
+examples/*/athena-report/
+examples/*/test-results/
+examples/*/playwright-report/

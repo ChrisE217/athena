@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1c232b"/>
+      <stop offset="100%" stop-color="#0e1114"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#g)"/>
+  <rect x="48" y="48" width="864" height="64" rx="2" fill="#24303a"/>
+  <rect x="48" y="140" width="220" height="320" rx="2" fill="#24303a"/>
+  <rect x="292" y="140" width="620" height="200" rx="2" fill="#1a2229" stroke="#f0a35e" stroke-width="2"/>
+  <text x="320" y="250" fill="#f0a35e" font-family="IBM Plex Mono, monospace" font-size="22">Failure screenshot</text>
+  <text x="320" y="285" fill="#8b97a3" font-family="DM Sans, sans-serif" font-size="16">action-button On Ball not found</text>
+  <rect x="292" y="360" width="180" height="36" rx="2" fill="#3dceb0" opacity="0.35"/>
+  <rect x="492" y="360" width="180" height="36" rx="2" fill="#24303a"/>
+  <rect x="692" y="360" width="180" height="36" rx="2" fill="#24303a"/>
+</svg>
